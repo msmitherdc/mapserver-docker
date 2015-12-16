@@ -20,6 +20,8 @@ ARG GID
 ENV ORACLE_HOME=/opt/instantclient 
 ENV LD_LIBRARY_PATH=${ORACLE_HOME}:/usr/lib 
 
+RUN apt-get update && apt-get install -y --fix-missing --no-install-recommends build-essential ca-certificates curl wget git libaio1 make cmake python-numpy python-dev python-software-properties software-properties-common  libc6-dev
+
 ARG MAPSERVER_VERSION
 RUN cd /build && \
     git clone https://github.com/mapserver/mapserver.git mapserver && \
