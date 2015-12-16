@@ -15,7 +15,7 @@ USER root
 #Setup user
 ARG UID
 ARG GID 
-RUN adduser --no-create-home --disabled-login gdaluser --uid $UID --gid $GID
+#RUN adduser --no-create-home --disabled-login msuser --uid $UID --gid $GID
 
 ENV ORACLE_HOME=/opt/instantclient 
 ENV LD_LIBRARY_PATH=${ORACLE_HOME}:/usr/lib 
@@ -68,4 +68,4 @@ RUN  apt-get purge -y software-properties-common build-essential cmake ;\
  rm -rf /var/lib/apt/lists/partial/* /tmp/* /var/tmp/*
 
 # Execute the gdal utilities as nobody, not root
-USER msuser
+USER gdaluser
