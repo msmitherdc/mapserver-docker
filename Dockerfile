@@ -26,9 +26,10 @@ ARG MAPSERVER_VERSION
 RUN cd /build && \
     git clone https://github.com/mapserver/mapserver.git mapserver && \
     cd /build/mapserver && \
-    git checkout ${MAPSERVER_VERSION}
+    git checkout ${MAPSERVER_VERSION} \
+    && mkdir /build/mapserver/build
 
-RUN cd /build/mapserver \
+RUN cd /build/mapserver/build \
     && cmake \
       -DCMAKE_BUILD_TYPE=Release \
       -DWITH_CLIENT_WFS=ON \
