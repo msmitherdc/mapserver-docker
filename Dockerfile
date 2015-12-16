@@ -22,7 +22,7 @@ ENV LD_LIBRARY_PATH=${ORACLE_HOME}:/usr/lib
 
 ARG MAPSERVER_VERSION
 RUN cd /build && \
-    git clone git@github.com:mapserver/mapserver.git mapserver && \
+    git clone https://github.com/mapserver/mapserver.git mapserver && \
     cd /build/mapserver && \
     git checkout ${MAPSERVER_VERSION}
 
