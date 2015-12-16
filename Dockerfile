@@ -10,13 +10,12 @@ FROM msmitherdc/grid-cloudhub:gdal-2.0.1
 
 MAINTAINER Michael Smith <Michael.smith.erdc@gmail.com>
 
-# Set up Instant Client - already available from source image
-#COPY instantclient_12_1 /opt/instantclient/
+USER root
 
 #Setup user
 ARG UID
 ARG GID 
-RUN sudo adduser --no-create-home --disabled-login gdaluser --uid $UID --gid $GID
+RUN adduser --no-create-home --disabled-login gdaluser --uid $UID --gid $GID
 
 ENV ORACLE_HOME=/opt/instantclient 
 ENV LD_LIBRARY_PATH=${ORACLE_HOME}:/usr/lib 
@@ -55,7 +54,7 @@ RUN cd /build/mapserver \
       -DWITH_POSTGIS=OFF \
       ..  \
     && make  \
-    && sudo make install \
+    && make install \
     && ldconfig        
 
 # Externally accessible data is by default put in /u02
@@ -63,7 +62,7 @@ WORKDIR /u02
 VOLUME ["/u02"]
 
 # Clean up
-RUN sudo apt-get purge -y software-properties-common build-essential cmake ;\
+RUN  apt-get purge -y software-properties-common build-essential cmake ;\
  apt-get autoremove -y ; \
  apt-get clean ; \
  rm -rf /var/lib/apt/lists/partial/* /tmp/* /var/tmp/*
