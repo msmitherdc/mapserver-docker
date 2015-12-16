@@ -10,8 +10,8 @@ FROM msmitherdc/grid-cloudhub:gdal-2.0.1
 
 MAINTAINER Michael Smith <Michael.smith.erdc@gmail.com>
 
-# Set up Instant Client
-COPY instantclient_12_1 /opt/instantclient/
+# Set up Instant Client - already available from source image
+#COPY instantclient_12_1 /opt/instantclient/
 
 #Setup user
 ARG UID
@@ -27,7 +27,6 @@ RUN cd /build && \
     cd /build/mapserver && \
     git checkout ${MAPSERVER_VERSION}
 
-ADD ms_configure.sh /build
 RUN cd /build/mapserver \
     && cmake \
       -DCMAKE_BUILD_TYPE=Release \
