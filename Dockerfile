@@ -2,7 +2,7 @@
 # msmitherdc/grid-cloudhub
 #
 # This creates an Ubuntu derived base image that installs the MAPSERVER_VERSION of MapServer
-# Git checkout compiled with needed drivers. 
+# Git checkout compiled with needed drivers.
 #
 
 # Ubuntu 14.04 Trusty Tahyr
@@ -14,13 +14,17 @@ USER root
 
 #Setup user
 ARG UID
-ARG GID 
+ARG GID
 #RUN adduser --no-create-home --disabled-login msuser --uid $UID --gid $GID
 
-ENV ORACLE_HOME=/opt/instantclient 
-ENV LD_LIBRARY_PATH=${ORACLE_HOME}:/usr/lib 
+ENV ORACLE_HOME=/opt/instantclient
+ENV LD_LIBRARY_PATH=${ORACLE_HOME}:/usr/lib
 
-RUN apt-get update && apt-get install -y --fix-missing --no-install-recommends build-essential ca-certificates curl wget git libaio1 make cmake python-numpy python-dev python-software-properties software-properties-common  libc6-dev libfreetype6-dev libcairo2-dev flex bison libfcgi-dev libxml2 libxml2-dev
+RUN apt-get update && apt-get install -y --fix-missing --no-install-recommends build-essential ca-certificates curl wget \
+    git libaio1 make cmake python-numpy python-dev python-software-properties software-properties-common  libc6-dev libfreetype6-dev \
+    libcairo2-dev flex bison libfcgi-dev libxml2 libxml2-dev bzip2 apache2 apache2-threaded-dev  apache2-mpm-worker
+
+RUN apt-get install apache2
 
 ARG MAPSERVER_VERSION
 RUN cd /build && \
@@ -58,7 +62,7 @@ RUN cd /build/mapserver/build \
       ..  \
     && make  \
     && make install \
-    && ldconfig        
+    && ldconfig
 
 # Externally accessible data is by default put in /u02
 WORKDIR /u02
@@ -71,4 +75,16 @@ RUN  apt-get purge -y software-properties-common build-essential cmake ;\
  rm -rf /var/lib/apt/lists/partial/* /tmp/* /var/tmp/*
 
 # Execute the gdal utilities as nobody, not root
-USER gdaluser
+
+# Enable these Apache modules
+RUN  a2enmod actions cgi alias
+
+RUN chmod o+x /usr/local/bin/mapserv
+RUN ln -s /usr/local/bin/mapserv /usr/lib/cgi-bin/mapserv
+RUN chmod 755 /usr/lib/cgi-bin
+
+EXPOSE  80
+
+ENV HOST_IP `ifconfig | grep inet | grep Mask:255.255.255.0 | cut -d ' ' -f 12 | cut -d ':' -f 2`
+
+CMD apache2ctl -D FOREGROUND
