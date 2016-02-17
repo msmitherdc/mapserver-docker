@@ -22,18 +22,16 @@ ENV LD_LIBRARY_PATH=${ORACLE_HOME}:/usr/lib
 
 RUN apt-get update && apt-get install -y --fix-missing --no-install-recommends build-essential ca-certificates curl wget \
     git libaio1 make cmake python-numpy python-dev python-software-properties software-properties-common  libc6-dev libfreetype6-dev \
-    libcairo2-dev flex bison libfcgi-dev libxml2 libxml2-dev bzip2 apache2 apache2-threaded-dev  apache2-mpm-worker
-
-RUN apt-get install apache2
+    libcairo2-dev flex bison libfcgi-dev libxml2 libxml2-dev bzip2 apache2 apache2-threaded-dev  apache2-mpm-worker apache2 \
+   && apt-get remove --purge -y $BUILD_PACKAGES  && rm -rf /var/lib/apt/lists/*
 
 ARG MAPSERVER_VERSION
 RUN cd /build && \
     git clone https://github.com/mapserver/mapserver.git mapserver && \
     cd /build/mapserver && \
     git checkout ${MAPSERVER_VERSION} \
-    && mkdir /build/mapserver/build
-
-RUN cd /build/mapserver/build \
+    && mkdir /build/mapserver/build \
+    && cd /build/mapserver/build \
     && cmake \
       -DCMAKE_BUILD_TYPE=Release \
       -DWITH_CLIENT_WFS=ON \
@@ -62,7 +60,8 @@ RUN cd /build/mapserver/build \
       ..  \
     && make  \
     && make install \
-    && ldconfig
+    && ldconfig \
+    && rm -Rf /build/mapserver
 
 # Externally accessible data is by default put in /u02
 WORKDIR /u02
