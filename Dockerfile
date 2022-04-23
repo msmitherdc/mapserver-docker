@@ -49,7 +49,7 @@ RUN dnf update -y \
 RUN echo 'LANG="en_US.utf8"' > /etc/locale.conf
 RUN ln -s /usr/lib64/libnsl.so.2 /usr/lib64/libnsl.so.1
 
-ENV CONDAENV /opt/conda/envs/grid
+ENV CONDAENV /opt/conda/envs/ms
 COPY --from=build /venv ${CONDAENV}
 
 # Hack to work around problems with Proj.4 in Docker
